@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/answer.dart';
 import 'package:flutter_complete_guide/question.dart';
+import 'package:flutter_complete_guide/quiz.dart';
+import 'package:flutter_complete_guide/result.dart';
 
 void main() => runApp(MyApp());
 
@@ -16,12 +18,24 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   //this state belongs to MyApp( <> )
   var questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _resetQuiz() {
+    setState(() {
+      questionIndex = 0;
+      _totalScore = 0;
+    });
+    
+  }
+
+  void _answerQuestion(int score) {
+
+    _totalScore+= score;
+
     setState(() {
       //forces Flutter to re-run UI, updates THIS widget
       questionIndex++;
-      if (questionIndex == 3) questionIndex = 0;
+      // if (questionIndex == 3) questionIndex = 0;
     }); //function that takes function as an argument
 
     print(questionIndex);
@@ -29,18 +43,31 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var questions = [
+    var _questions = [
       {
         'questionText': 'What\'s your favorite color?',
-        'answers': ['Blue', 'Red', 'Yellow', 'Cyan']
+        'answers': [
+          {'text': 'Blue', 'score': 10},
+          {'text': 'Red', 'score': 3},
+          {'text': 'Yellow', 'score': 333},
+          {'text': 'Cyan', 'score': 30}
+        ]
       },
       {
         'questionText': 'What\'s your favorite animal?',
-        'answers': ['Cat', 'Dog', 'Fish']
+        'answers': [
+          {'text': 'Cat', 'score': -3},
+          {'text': 'Dog', 'score' : 4},
+          {'text' : 'Fish', 'score' : 2}
+        ]
       },
       {
         'questionText': 'What\'s your favorite movie?',
-        'answers': ['Als wir tanzen', 'Call me by your name', 'Ja\'i tue ma mere']
+        'answers': [
+          {'text' : 'Als wir tanzen','score' : 10},
+          {'text' : 'Call me by your name', 'score' : 10},
+          {'text' : 'Ja\'i tue ma mere', 'score' : 10}
+        ]
       },
     ];
 
@@ -50,17 +77,12 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My First App'),
         ), //Text is a widget
-        body: Column(
-          children: [
-            Question(questions[questionIndex]['questionText']), //!!
-            ...(questions[questionIndex]['answers'] as List<String>).map((answer) {
-              return Answer(_answerQuestion,answer);
-            }).toList()
-            // map executes a function on every element in the list
-            // as List<String> - necessary for telling Dart that 'answers' is a list of strings
-            // ... 
-          ],
-        ),
+        body: questionIndex < _questions.length
+            ? Quiz(
+                questionIndex: questionIndex,
+                questions: _questions,
+                answerQuestion: _answerQuestion)
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
