@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
 
     setState(() {
       //forces Flutter to re-run UI, updates THIS widget
-      questionIndex++;
+      questionIndex+= 2;
       // if (questionIndex == 3) questionIndex = 0;
     }); //function that takes function as an argument
 
